@@ -1,0 +1,6 @@
+@StudentProgressTracker_HostAddress = http://localhost:5056
+
+GET {{StudentProgressTracker_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
