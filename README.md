@@ -36,6 +36,15 @@ A robust REST API for an EdTech student progress tracking system built with .NET
    - API Base URL: `https://localhost:7094`
    - Swagger Documentation: `https://localhost:5001/7094`
 
+6. **You Can Login using the admin account seeded automatically**
+   -email: "admin@gmail.com"
+   -password: "Admin123!"
+
+7- **You can also Register an account and login and you will be able to access end points for regular user**
+
+8- **There are two new endpoints assign-admin and assign-teacher**
+   they will allow the admin account to assing the admin and teacher roles for specific user - you can check current user permissions from the profile endpoint
+
 ## 🏗️ Architecture Overview
 
 ### Design Patterns Used
