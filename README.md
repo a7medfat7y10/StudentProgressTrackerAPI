@@ -61,16 +61,30 @@ StudentProgressTrackerAPI/
 ## 🔐 Security Implementation
 
 ### Authentication & Authorization
-- **JWT Token Authentication **: Built-in Identity in .NET 9.0
+- **JWT Token Authentication** : Built-in Identity in .NET 9.0
 - **Role-Based Access Control (RBAC)**: Supports Teacher and Administrator roles with different data access levels
-
-### Data Protection
+- **Authorization Middleware**: Uses JWT `sub` claim or client IP to uniquely identify callers.
 - **Input Validation**: Comprehensive validation using Data Annotations and FluentValidation
 - **SQL Injection Prevention**: Entity Framework Core parameterized queries prevent SQL injection attacks
 - **Data Sanitization**: All input data is sanitized before processing
-- **Secure Error Handling**: Error responses don't expose sensitive system information
+- **Rate Limiting Middleware**: 
+  - Limits each user/IP to 100 requests per minute.
+  - Tracks request windows using an in-memory dictionary.
+  - Returns standard headers:  
+    `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+  - Responds with **HTTP 429** and helpful message when the limit is exceeded.
+- **Global Exception Handling**:
+  - All unhandled exceptions are logged and returned in a consistent error format.
+  - Avoids stack traces being exposed to the client.
 
 ## ⚡ Performance Optimization
+
+- **Efficient Filtering and Pagination**: All list endpoints are paginated and filterable by grade, subject, or date.
+- **Query Optimization**: Key fields like `Grade`, `StudentId`, `Subject` are indexed in the database schema.
+- **Async/Await**: Used throughout for non-blocking DB and IO operations.
+- **Rate Limiting**: Prevents abuse and overload by rejecting excessive requests gracefully.
+- **Async Handling**: Middleware and all service layers use async I/O for scalable request handling.
+- **Global Error Handler**: Prevents unnecessary crashes and maintains consistent response latency.
 
 ### Database Performance
 - **Efficient Queries**: LINQ queries optimized with proper includes and projections
@@ -90,14 +104,6 @@ StudentProgressTrackerAPI/
 - **DTO Pattern**: To decouple internal domain models from API contracts, enhancing security and flexibility.
 - **AutoMapper**: Simplifies transformation between Models and DTOs.
 - **Validation Layer**: FluentValidation used to separate and centralize input validation logic.
-
----
-
-## 🚀 Performance Optimization Strategies
-
-- **Efficient Filtering and Pagination**: All list endpoints are paginated and filterable by grade, subject, or date.
-- **Query Optimization**: Key fields like `Grade`, `StudentId`, `Subject` are indexed in the database schema.
-- **Async/Await**: Used throughout for non-blocking DB and IO operations.
 
 ---
 
