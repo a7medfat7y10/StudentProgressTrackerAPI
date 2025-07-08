@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -15,6 +16,13 @@ namespace StudentProgressTracker
 
             // Add services to the container
             builder.Services.AddControllers();
+
+            // Add rate limiting services
+            builder.Services.AddMemoryCache();
+            builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+            builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+            builder.Services.AddInMemoryRateLimiting();
+            builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
             // Swagger configuration
             builder.Services.AddEndpointsApiExplorer();
@@ -72,6 +80,9 @@ namespace StudentProgressTracker
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 await DbInitializer.SeedAsync(db, userManager, roleManager);
             }
+
+            // Use rate limiting middleware
+            app.UseIpRateLimiting();
 
             if (app.Environment.IsDevelopment())
             {
